@@ -1,6 +1,7 @@
 package com.perfree.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.perfree.common.StringUtil;
 import com.perfree.entity.Peers;
 import com.perfree.entity.User;
 import org.apache.shiro.SecurityUtils;
@@ -12,6 +13,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * Controller基类
+ * @Author Perfree
+ * @Date 8:41 2019/6/6
+ **/
 @Controller
 public class BaseController {
 
@@ -57,5 +63,47 @@ public class BaseController {
             peersUrl += "/" + peers.getGroupName();
         }
         return peersUrl;
+    }
+
+    /**
+     * 获取访问域名(带组名)
+     * @Author Perfree
+     * @Date 11:37 2019/6/6
+     **/
+    public String getShowUrl(){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Peers peers = (Peers) request.getSession().getAttribute("peers");
+        String showAddress = "";
+        if(StringUtil.isBlank(peers.getShowAddress())){
+            if(StringUtil.isBlank(peers.getGroupName())){
+                showAddress += peers.getServerAddress()+"/group1";
+            }else{
+                showAddress += peers.getShowAddress()+"/"+peers.getGroupName();
+            }
+        }else{
+            if(StringUtil.isBlank(peers.getGroupName())) {
+                showAddress += peers.getShowAddress()+"/group1";
+            }else{
+                showAddress += peers.getShowAddress()+"/"+peers.getGroupName();
+            }
+        }
+        return showAddress;
+    }
+
+    /**
+     * 获取回显域名(不带url)
+     * @Author Perfree
+     * @Date 17:30 2019/6/9
+     **/
+    public String getUploadShowUrl(){
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Peers peers = (Peers) request.getSession().getAttribute("peers");
+        String showAddress = "";
+        if(StringUtil.isBlank(peers.getShowAddress())){
+                showAddress += peers.getServerAddress();
+        }else{
+                showAddress += peers.getShowAddress();
+        }
+        return showAddress;
     }
 }
